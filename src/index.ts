@@ -65,5 +65,60 @@ document.addEventListener('DOMContentLoaded', () =>{
   //Toggle completed status of a todo
   function toggleTodo(index: number): void{
     todos[index].completed = !todos[index].completed;
+    saveToLocalStorage();
+    renderTodos();
+    updateItemsLeft();
   }
+
+  //Edit the text of a todo
+  function editTodo(index: number, newText: string): void{
+    todos[index].text = newText;
+    saveToLocalStorage();
+  }
+
+  //Remove a todo
+  function removeTodo(index: number): void{
+    todos.splice(index, 1);
+    saveToLocalStorage();
+    renderTodos();
+    updateItemsLeft();
+  }
+
+  //Clear all completed todos
+  function clearCompletedTodos():void{
+    todos= todos.filter(todo => !todo.completed);
+    saveToLocalStorage();
+    renderTodos();
+    updateItemsLeft();
+  }
+
+ //Add event listeners
+ submitBtn.addEventListener('click', addTodo);
+ 
+ todoList.addEventListener('click', (e) =>{
+  const target = e.target as HTMLElement;
+  const index = Number(target.getAttribute('data-index'));
+  if(target.matches('input[type = "checkbox"]')){
+    toggleTodo(index);
+  }else if(target.matches('.remove-btn')){
+    removeTodo(index)
+  }
+ });
+
+ todoList.addEventListener('input', (e) =>{
+  const target = e.target as HTMLElement;
+  const index = Number(target.getAttribute('data-index'));
+  if(target.matches('span')){
+    editTodo(index, target.textContent || '');
+  }
+ });
+
+ allBtn.addEventListener('click', () => renderTodos('all'));
+ activeBtn.addEventListener('click', () => renderTodos('active'));
+ completeBtn.addEventListener('click', () => renderTodos('completed'));
+ clearCompletedBtn.addEventListener('click', clearCompletedTodos);
+
+ //Initial render
+ renderTodos();
+ updateItemsLeft();
 })
